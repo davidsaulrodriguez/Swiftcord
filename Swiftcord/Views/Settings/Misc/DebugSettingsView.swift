@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Sentry
 import DiscordKit
 import DiscordKitCore
 
@@ -38,27 +39,23 @@ struct DebugSettingsView: View {
 			DebugTableItem(item: "Gateway URL", val: DiscordKitConfig.default.gateway)
 		]
 
-		VStack(spacing: 0) {
+		Section("Statistics") {
 			Table(debugValues) {
 				TableColumn("Item", value: \.item)
 				TableColumn("Value", value: \.val)
-			}.frame(height: 150)
-			Divider()
-			ScrollView {
-				VStack(alignment: .leading, spacing: 16) {
-					Text("settings.others.debug.actions").font(.largeTitle)
-					Text("settings.others.debug.actions.info")
-
-					Button("settings.others.debug.actions.crash", role: .destructive) {
-						let funny: Int? = nil
-						print(funny!)
-					}
-					.buttonStyle(FlatButtonStyle())
-					.controlSize(.small)
-				}
-				.padding()
-				.frame(maxWidth: .infinity, alignment: .leading)
 			}
+		}
+		Section("settings.others.debug.actions") {
+			Button("settings.others.debug.actions.crash", role: .destructive) {
+				SentrySDK.close()
+				SentrySDK.crash()
+			}
+			.buttonStyle(FlatButtonStyle())
+			.controlSize(.small)
+
+			Text("settings.others.debug.actions.info")
+				.foregroundColor(.secondary)
+				.font(.callout)
 		}
     }
 }
